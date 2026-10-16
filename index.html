@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Shopper: ภารกิจนักช้อปอัจฉริยะ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Prompt for Thai typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            touch-action: manipulation;
+        }
+        .pixel-card {
+            box-shadow: 4px 4px 0px #0284c7;
+            transition: all 0.1s ease;
+        }
+        .pixel-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #0284c7;
+        }
+        .pixel-btn {
+            box-shadow: 0 4px 0 #0369a1;
+            transition: all 0.1s ease;
+        }
+        .pixel-btn:hover {
+            filter: brightness(1.05);
+        }
+        .pixel-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #0369a1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col justify-between">
+
+    <header class="bg-indigo-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="bg-amber-400 text-slate-900 font-bold p-2 rounded-xl shadow text-xl flex items-center justify-center w-12 h-12">
+                    🛒
+                </div>
+                <div>
+                    <h1 class="text-lg md:text-xl font-bold leading-tight">Smart Shopper</h1>
+                    <p class="text-xs text-indigo-200">วิทยาการคำนวณ ม.1: แนวคิดเชิงคำนวณ</p>
+                </div>
+            </div>
+            
+            <!-- CT Score Bar -->
+            <div class="flex items-center space-x-4 bg-indigo-700/60 px-4 py-2 rounded-2xl border border-indigo-500">
+                <div class="text-right">
+                    <span class="text-xs block text-indigo-200">Computational Score</span>
+                    <span id="ctScoreText" class="font-bold text-amber-300 text-base">0%</span>
+                </div>
+                <div class="w-28 md:w-36 bg-indigo-900 rounded-full h-3 overflow-hidden p-0.5 border border-indigo-400">
+                    <div id="ctScoreBar" class="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl w-full mx-auto p-4 md:p-6 my-auto flex-grow flex flex-col justify-center">
+
+        <!-- Welcome / Intro Screen -->
+        <div id="introScreen" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl border-4 border-indigo-100 text-center">
+            <div class="inline-block bg-indigo-100 text-indigo-600 text-5xl p-6 rounded-3xl mb-6 shadow-inner">
+                🏬✨
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-indigo-900 mb-3">ภารกิจนักช้อปอัจฉริยะ</h2>
+            <p class="text-slate-600 max-w-lg mx-auto mb-8 text-sm md:text-base leading-relaxed">
+                ยินดีต้อนรับสู่ซูเปอร์มาร์เก็ต! ช่วยตัวละครของเราแก้ปัญหาการซื้อของในชีวิตจริงโดยใช้ <span class="text-indigo-600 font-semibold">แนวคิดเชิงคำนวณ 4 ด้าน</span> ผ่าน 3 ด่านท้าทายความสามารถกันเถอะ!
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8 text-left max-w-2xl mx-auto">
+                <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 flex items-start space-x-3">
+                    <span class="text-2xl">🏷️</span>
+                    <div>
+                        <h4 class="font-bold text-blue-900 text-sm">ด่านที่ 1</h4>
+                        <p class="text-xs text-blue-700">Abstraction (คัดกรองข้อมูล)</p>
+                    </div>
+                </div>
+                <div class="bg-emerald-50 p-4 rounded-2xl border border-emerald-100 flex items-start space-x-3">
+                    <span class="text-2xl">🏷️</span>
+                    <div>
+                        <h4 class="font-bold text-emerald-900 text-sm">ด่านที่ 2</h4>
+                        <p class="text-xs text-emerald-700">Pattern Recognition (จับคู่โปรโมชัน)</p>
+                    </div>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-2xl border border-amber-100 flex items-start space-x-3">
+                    <span class="text-2xl">🗺️</span>
+                    <div>
+                        <h4 class="font-bold text-amber-900 text-sm">ด่านที่ 3</h4>
+                        <p class="text-xs text-amber-700">Algorithm (เขียนโค้ดช้อปปิ้ง)</p>
+                    </div>
+                </div>
+            </div>
+            <button onclick="startGame()" class="pixel-btn bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg px-8 py-4 rounded-2xl shadow-lg cursor-pointer">
+                🚀 เริ่มต้นภารกิจกันเลย!
+            </button>
+        </div>
+
+        <div id="stage1Screen" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-blue-100">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full uppercase">ด่านที่ 1 จาก 3</span>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-1">คัดกรองข้อมูล (Abstraction)</h3>
+                </div>
+                <span class="text-3xl">🏷️</span>
+            </div>
+            
+            <p class="text-slate-600 mb-6 text-sm md:text-base">
+                ป้ายสินค้านี้มีข้อมูลรกๆ เต็มไปหมด! จงเลือกเฉพาะ <span class="font-bold text-indigo-600">ข้อมูลสำคัญ 2 อย่าง</span> ที่จำเป็นที่สุดในการคำนวณเงินจ่ายค่าสินค้า
+            </p>
+
+            <!-- Product Tag Display Box -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-dashed border-amber-300 rounded-3xl p-6 mb-8 text-center relative shadow-sm">
+                <div class="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-amber-400 text-amber-900 text-xs font-bold px-4 py-1 rounded-full shadow">
+                    ป้ายสินค้าซูเปอร์มาร์เก็ต
+                </div>
+                <div class="text-4xl my-3">🥛🍪</div>
+                <h4 class="text-lg font-bold text-slate-800 mb-1">นมกล่องรสจืด แพ็ค 4 กล่อง</h4>
+                <p class="text-xs text-slate-500 mb-4">"ดื่มทุกวันมีประโยชน์ แคลเซียมสูง สมองไว เติบโตแข็งแรง"</p>
+                <div class="inline-block bg-white px-4 py-2 rounded-xl border border-amber-200 text-sm font-semibold text-slate-700">
+                    ผลิตโดยบริษัทนมไทย จำกัด (ล็อต A-2026)
+                </div>
+            </div>
+
+            <!-- Options Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6" id="stage1Options">
+                <!-- Dynamically populated options -->
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="checkStage1()" id="stage1Btn" disabled class="bg-slate-200 text-slate-400 font-bold px-6 py-3 rounded-xl cursor-not-allowed transition-all">
+                    ยืนยันคำตอบ
+                </button>
+            </div>
+        </div>
+
+        <div id="stage2Screen" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-emerald-100">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full uppercase">ด่านที่ 2 จาก 3</span>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-1">จับคู่รูปแบบโปรโมชัน (Pattern Recognition)</h3>
+                </div>
+                <span class="text-3xl">💡</span>
+            </div>
+
+            <p class="text-slate-600 mb-6 text-sm md:text-base">
+                คุณต้องการซื้อน้ำผลไม้รวม 3 กล่อง เพื่อความคุ้มค่าที่สุด จงวิเคราะห์รูปแบบโปรโมชันและเปรียบเทียบราคาต่อหน่วย แล้วเลือกโปรโมชันที่คุ้มค่าที่สุด!
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="stage2Promos">
+                <!-- Promo Option A -->
+                <div onclick="selectPromo('A')" id="promoCardA" class="border-2 border-slate-200 rounded-2xl p-5 cursor-pointer hover:border-emerald-400 transition-all bg-white flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-lg">แบบที่ A</span>
+                            <span class="text-2xl">🧃📦</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-1">โปรโมชัน "ซื้อ 2 แถม 1"</h4>
+                        <p class="text-xs text-slate-600 mb-4">ราคาปกติกล่องละ <span class="font-bold text-slate-800">24 บาท</span> (ซื้อ 2 ได้ 3 กล่องทันที)</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 border border-slate-100">
+                        คำนวณ: จ่าย 2 กล่อง = 48 บาท ได้ 3 กล่อง <br><span class="text-emerald-600 font-bold">ตกกล่องละ 16.00 บาท</span>
+                    </div>
+                </div>
+
+                <!-- Promo Option B -->
+                <div onclick="selectPromo('B')" id="promoCardB" class="border-2 border-slate-200 rounded-2xl p-5 cursor-pointer hover:border-emerald-400 transition-all bg-white flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-1 rounded-lg">แบบที่ B</span>
+                            <span class="text-2xl">🏷️⚡</span>
+                        </div>
+                        <h4 class="font-bold text-lg text-slate-800 mb-1">โปรโมชัน "ลด 20% ทั้งร้าน"</h4>
+                        <p class="text-xs text-slate-600 mb-4">จากราคาปกติกล่องละ <span class="font-bold text-slate-800">25 บาท</span> ลด 20% ทุกกล่อง</p>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl text-xs font-medium text-slate-700 border border-slate-100">
+                        คำนวณ: กล่องละ 25 - 20% = 20 บาท <br>ซื้อ 3 กล่อง = 60 บาท <br><span class="text-emerald-600 font-bold">ตกกล่องละ 20.00 บาท</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end">
+                <button onclick="checkStage2()" id="stage2Btn" disabled class="bg-slate-200 text-slate-400 font-bold px-6 py-3 rounded-xl cursor-not-allowed transition-all">
+                    ยืนยันเลือกโปรโมชันนี้
+                </button>
+            </div>
+        </div>
+
+        <div id="stage3Screen" class="hidden bg-white rounded-3xl p-6 md:p-8 shadow-xl border-4 border-amber-100">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full uppercase">ด่านที่ 3 จาก 3</span>
+                    <h3 class="text-xl md:text-2xl font-bold text-slate-800 mt-1">เขียนอัลกอริทึมช้อปปิ้ง (Algorithm & Debug)</h3>
+                </div>
+                <span class="text-3xl">🗺️</span>
+            </div>
+
+            <p class="text-slate-600 mb-4 text-sm">
+                วางแผนเส้นทางและคำสั่งให้รถเข็นเดินไปหยิบสินค้าตามรายการ โดยมี <span class="font-bold text-indigo-600">งบประมาณ 300 บาท</span> และเงื่อนไขตัดสินใจ!
+            </p>
+
+            <!-- Game Arena and Blocks Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+                
+                <!-- Left: 5x5 Grid Map -->
+                <div class="lg:col-span-5 flex flex-col items-center bg-slate-900 p-4 rounded-2xl shadow-inner relative">
+                    <div class="flex justify-between w-full text-white text-xs mb-2 font-medium">
+                        <span>💰 งบเหลือ: <span id="budgetDisplay" class="text-amber-400 font-bold">300</span> บาท</span>
+                        <span>🛒 หยิบ: <span id="itemCountDisplay" class="text-emerald-400 font-bold">0</span>/2 ชิ้น</span>
+                    </div>
+                    
+                    <!-- 5x5 Map Board -->
+                    <div id="mapGrid" class="grid grid-cols-5 gap-1 w-full aspect-square bg-slate-800 p-2 rounded-xl border border-slate-700">
+                        <!-- Generated via JS -->
+                    </div>
+
+                    <div id="mapStatusMsg" class="mt-3 text-xs text-center text-amber-300 font-medium min-h-[20px]">
+                        พร้อมเริ่มภารกิจซูเปอร์มาร์เก็ต!
+                    </div>
+                </div>
+
+                <!-- Right: Block Programming Area -->
+                <div class="lg:col-span-7 flex flex-col justify-between">
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-700 mb-2 flex items-center justify-between">
+                            <span>📦 กล่องคำสั่ง (ลากหรือกดเพิ่มคำสั่ง):</span>
+                            <span class="text-xs text-slate-400">เรียงลำดับให้ถูกต้อง</span>
+                        </h4>
+                        
+                        <!-- Available Blocks Palette -->
+                        <div class="grid grid-cols-2 gap-2 mb-4">
+                            <button onclick="addBlock('move')" class="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all">
+                                <span>⬆️</span> <span>เดินหน้า (1 ช่อง)</span>
+                            </button>
+                            <button onclick="addBlock('turnRight')" class="bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all">
+                                <span>↪️</span> <span>เลี้ยวขวา</span>
+                            </button>
+                            <button onclick="addBlock('pickup')" class="bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all">
+                                <span>🛍️</span> <span>หยิบสินค้า</span>
+                            </button><button onclick="addBlock('conditional')" class="bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 p-2.5 rounded-xl text-xs font-semibold flex items-center justify-center space-x-2 transition-all">
+                                <span>⚡</span> <span>ถ้าเงินเหลือ > 50 ซื้อขนม</span>
+                            </button>
+                        </div>
+
+                        <!-- Sequence Queue -->
+                        <h4 class="text-sm font-bold text-slate-700 mb-2">ลำดับคำสั่งที่ใช้งาน (<span id="queueCount">0</span> คำสั่ง):</h4>
+                        <div id="commandQueue" class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-3 min-h-[130px] max-h-[160px] overflow-y-auto flex flex-col gap-2">
+                            <span class="text-slate-400 text-xs italic m-auto">ยังไม่มีคำสั่ง กดเพิ่มจากด้านบนได้เลย...</span>
+                        </div>
+                    </div>
+
+                    <!-- Execution Buttons -->
+                    <div class="flex items-center space-x-3 mt-4 pt-3 border-t border-slate-100">
+                        <button onclick="runAlgorithm()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl shadow transition-all flex items-center justify-center space-x-2">
+                            <span>▶️</span> <span>Run Algorithm</span>
+                        </button>
+                        <button onclick="resetAlgorithm()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-3 px-4 rounded-xl transition-all">
+                            🔄 ล้างค่า
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="popupModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl border-4 border-indigo-100 text-center animate-bounce-short">
+                <div id="popupIcon" class="text-6xl mb-4">🎉</div>
+                <h3 id="popupTitle" class="text-2xl font-bold text-indigo-900 mb-2">ผ่านด่านสำเร็จ!</h3>
+                <p id="popupDesc" class="text-slate-600 text-sm mb-6 leading-relaxed">
+                    คำอธิบายและแนวคิดเชิงคำนวณประจำด่าน
+                </p>
+                <button onclick="closePopup()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all">
+                    ไปด่านถัดไป ➔
+                </button>
+            </div>
+        </div>
+
+        <!-- Final Victory Screen -->
+        <div id="victoryScreen" class="hidden bg-white rounded-3xl p-6 md:p-10 shadow-xl border-4 border-emerald-200 text-center">
+            <div class="text-7xl mb-4">🏆✨</div>
+            <h2 class="text-3xl font-bold text-emerald-800 mb-2">ยินดีด้วย! คุณคือ Smart Shopper ตัวจริง</h2>
+            <p class="text-slate-600 max-w-md mx-auto mb-6 text-sm">
+                คุณได้ฝึกฝนทักษะแนวคิดเชิงคำนวณทั้ง 4 ด้าน (Decomposition, Pattern Recognition, Abstraction, Algorithm) ในการแก้ปัญหาชีวิตจริงได้อย่างยอดเยี่ยม!
+            </p>
+            <div class="bg-indigo-50 p-6 rounded-2xl max-w-sm mx-auto mb-8 border border-indigo-100">
+                <span class="text-xs text-indigo-500 font-semibold uppercase tracking-wider block mb-1">คะแนนรวมความสามารถ</span>
+                <span id="finalScoreText" class="text-4xl font-extrabold text-indigo-600">100%</span>
+            </div>
+            <button onclick="restartGame()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-base px-8 py-3.5 rounded-2xl shadow-lg transition-all">
+                🔄 เล่นใหม่อีกครั้ง
+            </button>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-4 text-xs text-slate-400">
+        สื่อการสอนวิชาวิทยาการคำนวณ ระดับชั้น ม.1 | ออกแบบด้วยแนวคิด Instructional Design
+    </footer>
+
+    <script>
+        // Global Game State
+        let currentStage = 0;
+        let ctScore = 0;
+
+        // Stage 1 State (Abstraction)
+        const stage1Data = [
+            { id: 'price', label: 'ราคา (Price)', correct: true },
+            { id: 'discount', label: 'ส่วนลด (Discount)', correct: true },
+            { id: 'brand', label: 'ชื่อแบรนด์สินค้า', correct: false },
+            { id: 'slogan', label: 'สโลแกนโฆษณา', correct: false },
+            { id: 'expiry', label: 'วันหมดอายุ', correct: false },
+            { id: 'warning', label: 'คำเตือนสินค้า', correct: false }
+        ];
+        let selectedStage1 = [];
+
+        // Stage 2 State (Pattern Recognition)
+        let selectedPromoChoice = null;
+
+        // Stage 3 State (Algorithm & Map 5x5)
+        // Grid: 0 = empty path, 1 = start, 2 = product 1, 3 = product 2, 4 = cash register, 5 = snack store (for conditional)
+        // Map size 5x5
+        const initialMap = [
+            [1, 0, 0, 2, 0], // Row 0 (Start at [0,0], Product 1 at [0,3])
+            [0, 0, 0, 0, 0], // Row 1
+            [0, 3, 0, 0, 0], // Row 2 (Product 2 at [2,1])
+            [0, 0, 0, 0, 0], // Row 3
+            [0, 0, 5, 0, 4]  // Row 4 (Snack at [4,2], Cash Register at [4,4])
+        ];
+        let mapGridState = [];
+        let robotPos = { r: 0, c: 0, dir: 'R' }; // dir: R (Right), D (Down), L (Left), U (Up)
+        let robotBudget = 300;
+        let robotItemsCollected = 0;
+        let commandQueueList = [];
+        let isRunning = false;
+
+        // Initialize App
+        window.onload = function() {
+            initStage1Options();
+        };
+
+        function updateScore(points) {
+            ctScore = Math.min(100, ctScore + points);
+            document.getElementById('ctScoreText').innerText = ctScore + '%';
+            document.getElementById('ctScoreBar').style.width = ctScore + '%';
+        }
+
+        function startGame() {
+            document.getElementById('introScreen').classList.add('hidden');
+            document.getElementById('stage1Screen').classList.remove('hidden');
+            currentStage = 1;
+        }
+
+        // --- STAGE 1 LOGIC ---
+        function initStage1Options() {
+            const container = document.getElementById('stage1Options');
+            container.innerHTML = '';
+            // Shuffle options
+            let shuffled = [...stage1Data].sort(() => Math.random() - 0.5);
+            shuffled.forEach(item => {
+                let div = document.createElement('div');
+                div.className = "pixel-card bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 cursor-pointer flex items-center space-x-3 select-none hover:bg-blue-50/50";
+                div.id = `opt-${item.id}`;
+                div.onclick = () => toggleStage1Option(item.id);
+                div.innerHTML = `
+                    <div class="w-6 h-6 rounded-lg border-2 border-slate-300 flex items-center justify-center text-white text-xs font-bold transition-all" id="check-${item.id}"></div>
+                    <span class="font-medium text-slate-700 text-sm">${item.label}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function toggleStage1Option(id) {
+            let index = selectedStage1.indexOf(id);
+            let box = document.getElementById(`check-${id}`);
+            let card = document.getElementById(`opt-${id}`);
+
+            if (index > -1) {
+                selectedStage1.splice(index, 1);
+                box.className = "w-6 h-6 rounded-lg border-2 border-slate-300 flex items-center justify-center text-white text-xs font-bold transition-all";
+                box.innerHTML = "";
+                card.classList.remove('border-blue-500', 'bg-blue-50/30');
+            } else {
+                if (selectedStage1.length >= 2) {
+                    // limit to 2
+                    let removedId = selectedStage1.shift();
+                    let oldBox = document.getElementById(`check-${removedId}`);
+                    let oldCard = document.getElementById(`opt-${removedId}`);
+                    oldBox.className = "w-6 h-6 rounded-lg border-2 border-slate-300 flex items-center justify-center text-white text-xs font-bold transition-all";
+                    oldBox.innerHTML = "";
+                    oldCard.classList.remove('border-blue-500', 'bg-blue-50/30');
+                }
+                selectedStage1.push(id);
+                box.className = "w-6 h-6 rounded-lg bg-blue-600 border-2 border-blue-600 flex items-center justify-center text-white text-xs font-bold transition-all";
+                box.innerHTML = "✓";
+                card.classList.add('border-blue-500', 'bg-blue-50/30');
+            }
+
+            let btn = document.getElementById('stage1Btn');
+            if (selectedStage1.length === 2) {
+                btn.disabled = false;
+                btn.className = "pixel-btn bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl cursor-pointer shadow-md";
+            } else {
+                btn.disabled = true;
+                btn.className = "bg-slate-200 text-slate-400 font-bold px-6 py-3 rounded-xl cursor-not-allowed";
+            }
+        }
+
+        function checkStage1() {
+            let correctIds = stage1Data.filter(i => i.correct).map(i => i.id);
+            let isCorrect = selectedStage1.length === 2 && selectedStage1.every(id => correctIds.includes(id));
+
+            if (isCorrect) {
+                updateScore(33);
+                showPopup(
+                    "🎉",
+                    "ผ่านด่านที่ 1: Abstraction สำเร็จ!",
+                    "เยี่ยมมาก! คุณรู้จักคัดกรองข้อมูลที่ไม่จำเป็น (เช่น ชื่อแบรนด์ สโลแกน คำเตือน) ออกไป และเลือกเฉพาะ 'ราคา' และ 'ส่วนลด' ซึ่งเป็นข้อมูลสำคัญระดับนามธรรม (Abstraction) มาใช้คำนวณเงิน",
+                    () => {
+                        document.getElementById('stage1Screen').classList.add('hidden');
+                        document.getElementById('stage2Screen').classList.remove('hidden');
+                        currentStage = 2;
+                    }
+                );
+            } else {
+                showPopup(
+                    "❌",
+                    "ยังไม่ถูกต้อง ลองใหม่อีกครั้งนะ!",
+                    "ข้อมูลที่คุณเลือกยังไม่ใช่ข้อมูลหลักที่ใช้คำนวณเงิน ลองนึกดูว่าเวลาจ่ายเงินที่แคชเชียร์ เราดูข้อมูลอะไรจากป้ายบ้าง (เลือก 2 อย่าง)"
+                );
+            }
+        }
+
+        // --- STAGE 2 LOGIC ---
+        function selectPromo(type) {
+            selectedPromoChoice = type;
+            let cardA = document.getElementById('promoCardA');
+            let cardB = document.getElementById('promoCardB');
+
+            if (type === 'A') {
+                cardA.className = "border-2 border-emerald-500 bg-emerald-50/40 rounded-2xl p-5 cursor-pointer shadow-sm flex flex-col justify-between";
+                cardB.className = "border-2 border-slate-200 bg-white rounded-2xl p-5 cursor-pointer hover:border-emerald-400 transition-all flex flex-col justify-between";
+            } else {
+                cardB.className = "border-2 border-emerald-500 bg-emerald-50/40 rounded-2xl p-5 cursor-pointer shadow-sm flex flex-col justify-between";
+                cardA.className = "border-2 border-slate-200 bg-white rounded-2xl p-5 cursor-pointer hover:border-emerald-400 transition-all flex flex-col justify-between";
+            }
+
+            let btn = document.getElementById('stage2Btn');
+            btn.disabled = false;
+            btn.className = "pixel-btn bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl cursor-pointer shadow-md";
+        }
+
+        function checkStage2() {
+            if (selectedPromoChoice === 'A') {
+                updateScore(34);
+                showPopup(
+                    "🌟",
+                    "ผ่านด่านที่ 2: Pattern Recognition สำเร็จ!",
+                    "ยอดเยี่ยม! คุณใช้ทักษะการจดจำรูปแบบและการคำนวณเปรียบเทียบราคาต่อหน่วย (Unit Price) ค้นพบว่าแบบ A ตกกล่องละ 16 บาท คุ้มค่ากว่าแบบ B ที่ตกกล่องละ 20 บาท",
+                    () => {
+                        document.getElementById('stage2Screen').classList.add('hidden');
+                        document.getElementById('stage3Screen').classList.remove('hidden');
+                        currentStage = 3;
+                        initStage3Map();
+                    }
+                );
+            } else {
+                showPopup(
+                    "💡",
+                    "เกือบถูกแล้ว ลองคิดคำนวณใหม่นะ",
+                    "โปรโมชันแบบ B ลดแล้วเหลือกล่องละ 20 บาท แต่แบบ A (ซื้อ 2 แถม 1) เฉลี่ยแล้วกล่องละ 16 บาทเท่านั้น แบบไหนคุ้มกว่ากันนะ?"
+                );
+            }
+        }
+
+        // --- STAGE 3 LOGIC (Algorithm & Map) ---
+        function initStage3Map() {
+            mapGridState = JSON.parse(JSON.stringify(initialMap));
+            robotPos = { r: 0, c: 0, dir: 'R' };
+            robotBudget = 300;
+            robotItemsCollected = 0;
+            commandQueueList = [];
+            renderMap();
+            renderQueue();
+            updateDashboard();
+        }
+
+        function renderMap() {
+            const gridEl = document.getElementById('mapGrid');
+            gridEl.innerHTML = '';
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c < 5; c++) {
+                    let cell = document.createElement('div');
+                    cell.className = "bg-slate-700/80 rounded-lg flex items-center justify-center text-lg relative transition-all";
+                    
+                    let content = "";
+                    let cellVal = mapGridState[r][c];
+
+                    if (r === robotPos.r && c === robotPos.c) {
+                        let arrow = "➡️";
+                        if (robotPos.dir === 'D') arrow = "⬇️";
+                        if (robotPos.dir === 'L') arrow = "⬅️";
+                        if (robotPos.dir === 'U') arrow = "⬆️";
+                        content = `<span class="animate-pulse">${arrow}</span>`;
+                        cell.classList.add('bg-indigo-900/60', 'border', 'border-indigo-400');
+                    } else if (cellVal === 2) {
+                        content = "🥛";
+                    } else if (cellVal === 3) {
+                        content = "🧃";
+                    } else if (cellVal === 5) {
+                        content = "🍬";
+                    } else if (cellVal === 4) {
+                        content = "🏁";
+                    }
+
+                    cell.innerHTML = content;
+                    gridEl.appendChild(cell);
+                }
+            }
+        }
+
+        function updateDashboard() {
+            document.getElementById('budgetDisplay').innerText = robotBudget;
+            document.getElementById('itemCountDisplay').innerText = robotItemsCollected;
+        }
+
+        function addBlock(type) {
+            if (isRunning) return;
+            commandQueueList.push(type);
+            renderQueue();
+        }
+
+        function renderQueue() {
+            const container = document.getElementById('commandQueue');
+            document.getElementById('queueCount').innerText = commandQueueList.length;
+            
+            if (commandQueueList.length === 0) {
+                container.innerHTML = `<span class="text-slate-400 text-xs italic m-auto">ยังไม่มีคำสั่ง กดเพิ่มจากด้านบนได้เลย...</span>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            commandQueueList.forEach((cmd, idx) => {
+                let div = document.createElement('div');
+                div.className = "bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold flex items-center justify-between shadow-xs";
+                
+                let text = "";
+                let icon = "";
+                if (cmd === 'move') { icon = "⬆️"; text = "เดินหน้า 1 ช่อง"; }
+                else if (cmd === 'turnRight') { icon = "↪️"; text = "เลี้ยวขวา"; }
+                else if (cmd === 'pickup') { icon = "🛍️"; text = "หยิบสินค้า"; }
+                else if (cmd === 'conditional') { icon = "⚡"; text = "ถ้าเงินเหลือ > 50 ซื้อขนม"; }
+
+                div.innerHTML = `
+                    <div class="flex items-center space-x-2">
+                        <span class="text-slate-400 font-bold">${idx + 1}.</span>
+                        <span>${icon}</span>
+                        <span class="text-slate-700">${text}</span>
+                    </div>
+                    <button onclick="removeBlock(${idx})" class="text-rose-400 hover:text-rose-600 font-bold px-1.5">✕</button>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function removeBlock(idx) {
+            if (isRunning) return;
+            commandQueueList.splice(idx, 1);
+            renderQueue();
+        }
+
+        function resetAlgorithm() {
+            if (isRunning) return;
+            initStage3Map();
+            document.getElementById('mapStatusMsg').innerText = "รีเซ็ตสถานะรถเข็นเรียบร้อยแล้ว";
+        }
+
+        async function runAlgorithm() {
+            if (isRunning || commandQueueList.length === 0) return;
+            isRunning = true;
+            
+            // Reset position for run
+            robotPos = { r: 0, c: 0, dir: 'R' };
+            robotBudget = 300;
+            robotItemsCollected = 0;
+            renderMap();
+            updateDashboard();
+
+            let statusMsg = document.getElementById('mapStatusMsg');
+            statusMsg.innerText = "🚀 กำลังรันอัลกอริทึมตามลำดับคำสั่ง...";
+
+            for (let i = 0; i < commandQueueList.length; i++) {
+                await new Promise(r => setTimeout(r, 650));
+                let cmd = commandQueueList[i];
+
+                if (cmd === 'move') {
+                    if (robotPos.dir === 'R' && robotPos.c < 4) robotPos.c++;
+                    else if (robotPos.dir === 'D' && robotPos.r < 4) robotPos.r++;
+                    else if (robotPos.dir === 'L' && robotPos.c > 0) robotPos.c--;
+                    else if (robotPos.dir === 'U' && robotPos.r > 0) robotPos.r--;
+                } else if (cmd === 'turnRight') {
+                    if (robotPos.dir === 'R') robotPos.dir = 'D';
+                    else if (robotPos.dir === 'D') robotPos.dir = 'L';
+                    else if (robotPos.dir === 'L') robotPos.dir = 'U';
+                    else if (robotPos.dir === 'U') robotPos.dir = 'R';
+                } else if (cmd === 'pickup') {
+                    let val = mapGridState[robotPos.r][robotPos.c];
+                    if (val === 2 || val === 3) {
+                        robotItemsCollected++;
+                        robotBudget -= 80; // Cost deduction
+                        mapGridState[robotPos.r][robotPos.c] = 0; // Clear item
+                    }
+                } else if (cmd === 'conditional') {
+                    // Check if budget > 50 and at snack store [4,2]
+                    if (robotBudget > 50 && robotPos.r === 4 && robotPos.c === 2) {
+                        robotBudget -= 30; // Buy snack
+                        mapGridState[4][2] = 0;
+                    }
+                }
+
+                renderMap();
+                updateDashboard();
+            }
+
+            await new Promise(r => setTimeout(r, 400));
+            isRunning = false;
+
+            // Check win condition for Stage 3
+            if (robotItemsCollected >= 2 && robotBudget >= 0) {
+                updateScore(33);
+                showPopup(
+                    "🏆",
+                    "สำเร็จภารกิจ Smart Shopper สมบูรณ์แบบ!",
+                    "ยอดเยี่ยมมาก! คุณได้ออกแบบ Algorithm ควบคุมการทำงานของหุ่นยนต์ เดินทางถูกต้อง หยิบสินค้าครบ และใช้คำสั่งตัดสินใจเงื่อนไข (Conditional Statement) ได้อย่างแม่นยำ",
+                    () => {
+                        document.getElementById('stage3Screen').classList.add('hidden');
+                        document.getElementById('victoryScreen').classList.remove('hidden');
+                        document.getElementById('finalScoreText').innerText = ctScore + '%';
+                    }
+                );
+            } else {
+                statusMsg.innerText = "⚠️ ยังไม่สำเร็จ! ลองตรวจสอบลำดับคำสั่งหรือตำแหน่งการหยิบสินค้า แล้วกด Debug แก้ไขใหม่";
+                showPopup(
+                    "🔄",
+                    "ต้องการ Debug แก้ไขลำดับคำสั่ง",
+                    "หุ่นยนต์ยังหยิบสินค้าไม่ครบ 2 ชิ้น หรือเงินไม่พอ ลองตรวจสอบเส้นทางและคำสั่งหยิบสินค้าใหม่อีกครั้งนะ!"
+                );
+            }
+        }
+
+        // --- POPUP MODAL SYSTEM ---
+        let popupCallback = null;
+        function showPopup(icon, title, desc, callback) {
+            document.getElementById('popupIcon').innerText = icon;
+            document.getElementById('popupTitle').innerText = title;
+            document.getElementById('popupDesc').innerText = desc;
+            document.getElementById('popupModal').classList.remove('hidden');
+            popupCallback = callback || null;
+        }
+
+        function closePopup() {
+            document.getElementById('popupModal').classList.add('hidden');
+            if (popupCallback) {
+                popupCallback();
+                popupCallback = null;
+            }
+        }
+
+        function restartGame() {
+            ctScore = 0;
+            document.getElementById('victoryScreen').classList.add('hidden');
+            document.getElementById('introScreen').classList.remove('hidden');
+            document.getElementById('ctScoreText').innerText = '0%';
+            document.getElementById('ctScoreBar').style.width = '0%';
+            selectedStage1 = [];
+            selectedPromoChoice = null;
+            initStage1Options();
+        }
+    </script>
+</body>
+</html>
